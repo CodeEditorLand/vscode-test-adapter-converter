@@ -1,26 +1,16 @@
 {
-  "name": "test-adapter-converter",
-  "displayName": "Test Adapter Converter",
-  "version": "0.1.9",
-  "description": "Converter extension from the Test Adapter UI to native VS Code testing",
-  "homepage": "https://github.com/microsoft/vscode-test-adapter-converter#readme",
+  "activationEvents": [
+    "onCommand:test-explorer.run",
+    "onCommand:test-explorer.run-all"
+  ],
+  "author": "Connor Peet <connor@peet.io>",
   "bugs": {
     "url": "https://github.com/microsoft/vscode-test-adapter-converter/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/microsoft/vscode-test-adapter-converter.git"
-  },
-  "license": "MIT",
-  "author": "Connor Peet <connor@peet.io>",
-  "publisher": "ms-vscode",
-  "main": "./out/extension.js",
-  "scripts": {
-    "build": "npm run -S esbuild-base -- --sourcemap",
-    "esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
-    "fmt": "prettier --write \"src/**/*.ts\"&& npm run test -- --fix",
-    "vscode:prepublish": "npm run -S esbuild-base -- --minify",
-    "watch": "npm run -S esbuild-base -- --sourcemap --watch"
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    }
   },
   "contributes": {
     "commands": [
@@ -46,22 +36,32 @@
       ]
     }
   },
-  "activationEvents": [
-    "onCommand:test-explorer.run",
-    "onCommand:test-explorer.run-all"
-  ],
+  "description": "Converter extension from the Test Adapter UI to native VS Code testing",
   "devDependencies": {
-    "@types/vscode": "^1.66.0",
-    "esbuild": "^0.16.11",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.9.4",
-    "vscode-dts": "^0.3.3",
-    "vscode-test": "^1.5.0",
-    "vscode-test-adapter-api": "^1.9.0"
+    "@types/vscode": "1.66.0",
+    "esbuild": "0.16.11",
+    "rimraf": "3.0.2",
+    "typescript": "4.9.4",
+    "vscode-dts": "0.3.3",
+    "vscode-test": "1.5.0",
+    "vscode-test-adapter-api": "1.9.0"
   },
-  "capabilities": {
-    "untrustedWorkspaces": {
-      "supported": true
-    }
-  }
+  "displayName": "Test Adapter Converter",
+  "homepage": "https://github.com/microsoft/vscode-test-adapter-converter#readme",
+  "license": "MIT",
+  "main": "./out/extension.js",
+  "name": "test-adapter-converter",
+  "publisher": "ms-vscode",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/vscode-test-adapter-converter.git"
+  },
+  "scripts": {
+    "build": "npm run -S esbuild-base -- --sourcemap",
+    "esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+    "fmt": "prettier --write \"src/**/*.ts\"&& npm run test -- --fix",
+    "vscode:prepublish": "npm run -S esbuild-base -- --minify",
+    "watch": "npm run -S esbuild-base -- --sourcemap --watch"
+  },
+  "version": "0.1.9"
 }

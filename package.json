@@ -60,7 +60,7 @@
 		"esbuild": "0.20.2",
 		"rimraf": "5.0.5",
 		"typescript": "5.4.2",
-		"typescript-esbuild": "latest",
+		"typescript-esbuild": "0.4.5",
 		"vscode-dts": "0.3.3",
 		"vscode-test": "1.5.0",
 		"vscode-test-adapter-api": "1.9.0"

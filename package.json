@@ -1,33 +1,20 @@
 {
-	"name": "test-adapter-converter",
-	"displayName": "Test Adapter Converter",
-	"version": "0.0.1",
-	"private": false,
-	"description": "Converter extension from the Test Adapter UI to native VS Code testing",
-	"keywords": [
-		"land"
+	"activationEvents": [
+		"onCommand:test-explorer.run",
+		"onCommand:test-explorer.run-all"
 	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandTestAdapterConverter#readme",
+	"author": {
+		"email": "Land@PlayForm.Cloud",
+		"name": "🌆 — Land —",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
 	"bugs": {
 		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandTestAdapterConverter/issues"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandTestAdapterConverter.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🌆 — Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
-	"main": "./out/extension.js",
-	"scripts": {
-		"Document": "Document 'Source/**/*.ts'",
-		"build": "npm run -S esbuild-base -- --sourcemap",
-		"esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
-		"prepublishOnly": "Build 'Source/**/*.ts'"
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		}
 	},
 	"contributes": {
 		"commands": [
@@ -53,22 +40,35 @@
 			]
 		}
 	},
-	"activationEvents": [
-		"onCommand:test-explorer.run",
-		"onCommand:test-explorer.run-all"
-	],
+	"description": "Converter extension from the Test Adapter UI to native VS Code testing",
 	"devDependencies": {
 		"@playform/build": "0.0.7",
 		"@playform/document": "0.0.6",
 		"esbuild": "0.20.2",
 		"rimraf": "5.0.5"
 	},
+	"displayName": "Test Adapter Converter",
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandTestAdapterConverter#readme",
+	"keywords": [
+		"land"
+	],
+	"license": "SEE LICENSE IN LICENSE",
+	"main": "./out/extension.js",
+	"name": "test-adapter-converter",
+	"private": false,
 	"publishConfig": {
 		"access": "public"
 	},
-	"capabilities": {
-		"untrustedWorkspaces": {
-			"supported": true
-		}
-	}
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandTestAdapterConverter.git"
+	},
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "npm run -S esbuild-base -- --sourcemap",
+		"esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+		"prepublishOnly": "Build 'Source/**/*.ts'"
+	},
+	"type": "module",
+	"version": "0.0.1"
 }

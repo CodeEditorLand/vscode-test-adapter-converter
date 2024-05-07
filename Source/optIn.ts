@@ -25,7 +25,7 @@ export const shouldPromptForNativeTesting = () => !usingNativeTesting();
 export class OptInController implements TestAdapterController {
   constructor(private readonly context: vscode.ExtensionContext) {}
 
-  /** @inheritdoc */
+  
   public registerTestAdapter(adapter: TestAdapter): void {
     if (!this.shouldPrompt()) {
       return;
@@ -38,7 +38,7 @@ export class OptInController implements TestAdapterController {
     });
   }
 
-  /** @inheritdoc */
+  
   public unregisterTestAdapter(): void {
     // no-op
   }

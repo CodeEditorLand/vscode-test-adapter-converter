@@ -36,8 +36,8 @@
 		"onCommand:test-explorer.run-all"
 	],
 	"devDependencies": {
-		"esbuild": "0.16.11",
-		"rimraf": "3.0.2"
+		"esbuild": "0.21.3",
+		"rimraf": "5.0.7"
 	},
 	"capabilities": {
 		"untrustedWorkspaces": {

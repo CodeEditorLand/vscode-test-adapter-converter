@@ -36,7 +36,7 @@
 		"onCommand:test-explorer.run-all"
 	],
 	"devDependencies": {
-		"esbuild": "0.22.0",
+		"esbuild": "0.23.0",
 		"rimraf": "5.0.7"
 	},
 	"capabilities": {

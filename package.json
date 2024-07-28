@@ -1,11 +1,12 @@
 {
-	"name": "test-adapter-converter",
-	"displayName": "Test Adapter Converter",
-	"description": "Converter extension from the Test Adapter UI to native VS Code testing",
-	"main": "./out/extension.js",
-	"scripts": {
-		"build": "npm run -S esbuild-base -- --sourcemap",
-		"esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node"
+	"activationEvents": [
+		"onCommand:test-explorer.run",
+		"onCommand:test-explorer.run-all"
+	],
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		}
 	},
 	"contributes": {
 		"commands": [
@@ -31,17 +32,16 @@
 			]
 		}
 	},
-	"activationEvents": [
-		"onCommand:test-explorer.run",
-		"onCommand:test-explorer.run-all"
-	],
+	"description": "Converter extension from the Test Adapter UI to native VS Code testing",
 	"devDependencies": {
 		"esbuild": "0.16.11",
 		"rimraf": "3.0.2"
 	},
-	"capabilities": {
-		"untrustedWorkspaces": {
-			"supported": true
-		}
+	"displayName": "Test Adapter Converter",
+	"main": "./out/extension.js",
+	"name": "test-adapter-converter",
+	"scripts": {
+		"build": "npm run -S esbuild-base -- --sourcemap",
+		"esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node"
 	}
 }

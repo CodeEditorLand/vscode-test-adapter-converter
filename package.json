@@ -34,7 +34,7 @@
 	},
 	"description": "Converter extension from the Test Adapter UI to native VS Code testing",
 	"devDependencies": {
-		"esbuild": "0.23.0",
+		"esbuild": "0.23.1",
 		"rimraf": "6.0.1"
 	},
 	"displayName": "Test Adapter Converter",

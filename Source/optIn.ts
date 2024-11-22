@@ -9,7 +9,9 @@ import {
 } from "vscode-test-adapter-api";
 
 const didGloballyEnableKey = "didAutoGloballyEnable";
+
 const promptStorageKey = "promptedToUseNative2";
+
 let promptedThisSession = false;
 export const useNativeTestingConfig = "testExplorer.useNativeTesting";
 
@@ -22,6 +24,7 @@ export const switchToNativeTesting = (
 ) => {
 	const config = vscode.workspace.getConfiguration();
 	config.update(useNativeTestingConfig, true, target);
+
 	if (!silent) {
 		vscode.window.showInformationMessage(
 			'Thanks for taking native testing for a spin! If you run into problems, you can turn the new experience off with the "testExplorer.useNativeTesting" setting.',
@@ -45,6 +48,7 @@ export class OptInController implements TestAdapterController {
 			!usingNativeTesting()
 		) {
 			this.context.globalState.update(didGloballyEnableKey, true);
+
 			switchToNativeTesting(undefined, true);
 		}
 
@@ -74,10 +78,13 @@ export class OptInController implements TestAdapterController {
 		}
 
 		const yes = "Yes";
+
 		const workspace = "Only in this Workspace";
+
 		const no = "No";
 
 		promptedThisSession = true;
+
 		const result = await vscode.window.showInformationMessage(
 			"Would you like to try out VS Code's new native UI for testing?",
 			no,

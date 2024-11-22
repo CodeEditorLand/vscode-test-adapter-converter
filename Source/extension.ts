@@ -17,6 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let factory: TestConverterFactory | undefined;
 
 	const optIn = new OptInController(context);
+
 	if (optIn.shouldPrompt()) {
 		setTimeout(() => {
 			const testHub = vscode.extensions.getExtension<TestHub>(
@@ -43,6 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const testHub = vscode.extensions.getExtension<TestHub>(
 					testExplorerExtensionId,
 				)?.exports;
+
 				if (!testHub) {
 					return;
 				}
@@ -79,6 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
 			"testExplorerConverter.showError",
 			(controllerId) => {
 				const error = factory?.getByControllerId(controllerId)?.error;
+
 				if (error) {
 					openUntitledEditor(error);
 				}

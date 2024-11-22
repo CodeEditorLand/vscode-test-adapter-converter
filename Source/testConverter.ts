@@ -25,16 +25,19 @@ const unique = <T, R>(arr: readonly T[], project: (v: T) => R): T[] => {
   const seen = new Set<R>();
   return arr.filter(t => {
     const r = project(t);
+
     if (seen.has(r)) {
       return false;
     }
 
     seen.add(r);
+
     return true;
   });
 };
 
 const testViewId = 'workbench.view.extension.test';
+
 let nextControllerId = 1;
 
 const getControllerName = () => {
@@ -58,13 +61,17 @@ const getControllerName = () => {
     }
 
     const parts = frame.file.split(/[\\/]/g);
+
     const extensionsIndex = parts.indexOf('extensions');
+
     if (extensionsIndex === -1) {
       continue;
     }
 
     const extensionAndVersionPart = parts[extensionsIndex + 1];
+
     const extensionId = extensionAndVersionPart.replace(/-[\d.]+$/, '');
+
     if (
       extensionId.includes('vscode-test-explorer') ||
       extensionId.includes('test-adapter-converter')
@@ -135,13 +142,16 @@ export class TestConverter implements vscode.Disposable {
     ) => {
       if (!include) {
         this.run(this.controller.createTestRun(request), include, debug, token);
+
         return;
       }
 
       const involved = new Map<TestConverter, vscode.TestItem[]>();
       for (const test of include) {
         const converter = metadata.get(test)!.converter;
+
         const i = involved.get(converter);
+
         if (i) {
           i.push(test);
         } else {
@@ -178,6 +188,7 @@ export class TestConverter implements vscode.Disposable {
             this.doneDiscovery = undefined;
             this.itemsById.clear();
             this.syncTopLevel(evt);
+
             break;
 
           case 'started':
@@ -198,6 +209,7 @@ export class TestConverter implements vscode.Disposable {
       }),
       adapter.testStates(evt => {
         const data = this.tasksByRunId.get(evt.testRunId ?? '');
+
         if (!data) {
           return;
         }
@@ -209,10 +221,12 @@ export class TestConverter implements vscode.Disposable {
             return this.onTestSuiteEvent(evt);
           case 'finished':
             this.tasksByRunId.delete(evt.testRunId ?? '');
+
             return data.task.end();
         }
       })
     );
+
     if (adapter.retire) {
       this.disposables.push(
         adapter.retire(evt => {
@@ -276,6 +290,7 @@ export class TestConverter implements vscode.Disposable {
 
   private syncTopLevel(evt: TestLoadFinishedEvent) {
     vscode.commands.executeCommand('setContext', 'hasTestConverterTests', true);
+
     if (evt.suite) {
       this.controller.label = this.adapter.workspaceFolder
         ? `${this.adapter.workspaceFolder.name} - ${evt.suite.label}`
@@ -333,8 +348,11 @@ export class TestConverter implements vscode.Disposable {
 
   private onTestSuiteEvent(evt: TestSuiteEvent) {
     const runId = evt.testRunId ?? '';
+
     const runningSuite = this.runningSuiteByRunId.get(runId);
+
     const suiteId = typeof evt.suite === 'string' ? evt.suite : evt.suite.id;
+
     if (evt.state === 'running') {
       if (!this.itemsById.has(suiteId) && typeof evt.suite === 'object' && runningSuite) {
         runningSuite.children.add(this.createTest(evt.suite));
@@ -358,7 +376,9 @@ export class TestConverter implements vscode.Disposable {
    */
   private onTestEvent({ task, announcedTests }: IRunningTaskData, evt: TestEvent) {
     const runningSuite = this.runningSuiteByRunId.get(evt.testRunId ?? '');
+
     const testId = typeof evt.test === 'string' ? evt.test : evt.test.id;
+
     if (
       evt.state === 'running' &&
       !this.itemsById.has(testId) &&
@@ -368,6 +388,7 @@ export class TestConverter implements vscode.Disposable {
       runningSuite.children.add(this.createTest(evt.test));
     }
     const vscodeTest = this.itemsById.get(testId);
+
     if (!vscodeTest) {
       return;
     }
@@ -376,14 +397,17 @@ export class TestConverter implements vscode.Disposable {
       case 'skipped':
         this.appendState(task, vscodeTest, '○', ansiColors.yellow, ansiColors.dim);
         task.skipped(vscodeTest);
+
         break;
       case 'running':
         task.started(vscodeTest);
+
         break;
       case 'passed':
         this.ensureChainAnnounced(task, announcedTests, vscodeTest);
         this.appendState(task, vscodeTest, '✔', ansiColors.green);
         task.passed(vscodeTest);
+
         break;
       case 'errored':
       case 'failed':
@@ -391,6 +415,7 @@ export class TestConverter implements vscode.Disposable {
         this.appendState(task, vscodeTest, '✖', ansiColors.red, ansiColors.red);
 
         const messages: vscode.TestMessage[] = [];
+
         if (evt.message) {
           task.appendOutput(evt.message.replace(/\r?\n/g, '\r\n'), undefined, vscodeTest);
           if (!evt.decorations?.length) {
@@ -410,6 +435,7 @@ export class TestConverter implements vscode.Disposable {
         }
 
         task[evt.state](vscodeTest, messages);
+
         break;
     }
 
@@ -424,6 +450,7 @@ export class TestConverter implements vscode.Disposable {
     leafTest: vscode.TestItem
   ) {
     const chain: vscode.TestItem[] = [];
+
     for (
       let item: vscode.TestItem | undefined = leafTest;
       item && !announcedTests.has(item);
@@ -448,6 +475,7 @@ export class TestConverter implements vscode.Disposable {
     textColor: (s: string) => string = s => s
   ) {
     let indent = '';
+
     for (let parent = vscodeTest.parent; parent; parent = parent.parent) {
       indent += '  ';
     }
@@ -462,5 +490,6 @@ const gatherChildren = (col: vscode.TestItemCollection) => {
 };
 
 const schemeMatcher = /^[a-z][a-z0-9+-.]+:/;
+
 const fileToUri = (file: string) =>
   schemeMatcher.test(file) ? vscode.Uri.parse(file) : vscode.Uri.file(file);

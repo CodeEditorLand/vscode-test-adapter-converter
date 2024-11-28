@@ -13,6 +13,7 @@ const didGloballyEnableKey = "didAutoGloballyEnable";
 const promptStorageKey = "promptedToUseNative2";
 
 let promptedThisSession = false;
+
 export const useNativeTestingConfig = "testExplorer.useNativeTesting";
 
 export const usingNativeTesting = () =>

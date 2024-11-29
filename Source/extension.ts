@@ -29,6 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 
 			testHub.registerTestController(optIn);
+
 			context.subscriptions.push({
 				dispose() {
 					testHub.unregisterTestController(optIn);
@@ -50,9 +51,11 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 
 				factory = new TestConverterFactory();
+
 				context.subscriptions.push(factory);
 
 				testHub.registerTestController(factory);
+
 				context.subscriptions.push({
 					dispose() {
 						testHub.unregisterTestController(factory!);
@@ -68,6 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			if (!usingNativeTesting()) {
 				factory?.dispose();
+
 				factory = undefined;
 			}
 		}),
@@ -94,5 +98,6 @@ const openUntitledEditor = async (contents: string) => {
 	const untitledDoc = await vscode.workspace.openTextDocument({
 		content: contents,
 	});
+
 	await vscode.window.showTextDocument(untitledDoc);
 };

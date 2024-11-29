@@ -27,6 +27,7 @@ export class TestConverterFactory
 	 */
 	public unregisterTestAdapter(adapter: TestAdapter): void {
 		this.converters.get(adapter)?.dispose();
+
 		this.converters.delete(adapter);
 	}
 

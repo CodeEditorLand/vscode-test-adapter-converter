@@ -24,6 +24,7 @@ export const switchToNativeTesting = (
 	silent = false,
 ) => {
 	const config = vscode.workspace.getConfiguration();
+
 	config.update(useNativeTestingConfig, true, target);
 
 	if (!silent) {

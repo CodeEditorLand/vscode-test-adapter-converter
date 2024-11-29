@@ -18,11 +18,13 @@ export const metadata = new WeakMap<vscode.TestItem, ITestMetadata>();
 
 export interface ITestMetadata {
 	isSuite: boolean;
+
 	converter: TestConverter;
 }
 
 const unique = <T, R>(arr: readonly T[], project: (v: T) => R): T[] => {
 	const seen = new Set<R>();
+
 	return arr.filter((t) => {
 		const r = project(t);
 
@@ -55,6 +57,7 @@ const getControllerName = () => {
   */
 
 	const stack = parseStack(new Error().stack || "");
+
 	for (const frame of stack) {
 		if (!frame.file) {
 			continue;
@@ -87,16 +90,23 @@ const getControllerName = () => {
 
 interface IRunningTaskData {
 	task: vscode.TestRun;
+
 	announcedTests: Set<vscode.TestItem>;
 }
 
 export class TestConverter implements vscode.Disposable {
 	private readonly controller: vscode.TestController;
+
 	private doneDiscovery?: () => void;
+
 	private readonly itemsById = new Map<string, vscode.TestItem>();
+
 	private readonly tasksByRunId = new Map<string, IRunningTaskData>();
+
 	private readonly runningSuiteByRunId = new Map<string, vscode.TestItem>();
+
 	private readonly disposables: vscode.Disposable[] = [];
+
 	private _error?: string;
 
 	public get error() {
@@ -112,7 +122,9 @@ export class TestConverter implements vscode.Disposable {
 			`test-adapter-ctrl-${nextControllerId++}`,
 			getControllerName(),
 		);
+
 		this.controller.refreshHandler = () => this.adapter.load();
+
 		this.disposables.push(this.controller);
 
 		const makeRunHandler =
@@ -160,6 +172,7 @@ export class TestConverter implements vscode.Disposable {
 			}
 
 			const involved = new Map<TestConverter, vscode.TestItem[]>();
+
 			for (const test of include) {
 				const converter = metadata.get(test)!.converter;
 
@@ -188,6 +201,7 @@ export class TestConverter implements vscode.Disposable {
 			makeRunHandler(false),
 			true,
 		);
+
 		run.supportsContinuousRun = !!adapter.retire;
 
 		const debug = this.controller.createRunProfile(
@@ -196,6 +210,7 @@ export class TestConverter implements vscode.Disposable {
 			makeRunHandler(true),
 			true,
 		);
+
 		debug.supportsContinuousRun = !!adapter.retire;
 
 		this.disposables.push(
@@ -203,8 +218,11 @@ export class TestConverter implements vscode.Disposable {
 				switch (evt.type) {
 					case "finished":
 						this.doneDiscovery?.();
+
 						this.doneDiscovery = undefined;
+
 						this.itemsById.clear();
+
 						this.syncTopLevel(evt);
 
 						break;
@@ -225,6 +243,7 @@ export class TestConverter implements vscode.Disposable {
 									}),
 							);
 						}
+
 						break;
 				}
 			}),
@@ -238,8 +257,10 @@ export class TestConverter implements vscode.Disposable {
 				switch (evt.type) {
 					case "test":
 						return this.onTestEvent(data, evt);
+
 					case "suite":
 						return this.onTestSuiteEvent(evt);
+
 					case "finished":
 						this.tasksByRunId.delete(evt.testRunId ?? "");
 
@@ -255,6 +276,7 @@ export class TestConverter implements vscode.Disposable {
 						const items = evt.tests
 							.map((test) => this.itemsById.get(test))
 							.filter((item) => !!item);
+
 						this.controller.invalidateTestResults(items);
 					} else {
 						this.controller.invalidateTestResults();
@@ -288,11 +310,13 @@ export class TestConverter implements vscode.Disposable {
 			}
 
 			const queue: Iterable<vscode.TestItem>[] = [testsToRun!];
+
 			while (queue.length) {
 				for (const test of queue.pop()!) {
 					if (!metadata.get(test)?.isSuite) {
 						run.enqueued(test);
 					}
+
 					queue.push(gatherChildren(test.children));
 				}
 			}
@@ -301,7 +325,9 @@ export class TestConverter implements vscode.Disposable {
 				task: run,
 				announcedTests: new Set(),
 			});
+
 			token.onCancellationRequested(() => this.adapter.cancel());
+
 			listener.dispose();
 		});
 
@@ -325,22 +351,27 @@ export class TestConverter implements vscode.Disposable {
 			this.controller.label = this.adapter.workspaceFolder
 				? `${this.adapter.workspaceFolder.name} - ${evt.suite.label}`
 				: evt.suite.label;
+
 			this.syncItemChildren(this.controller.items, evt.suite.children);
 		} else if (evt.errorMessage) {
 			const test = this.controller.createTestItem(
 				"error",
 				"Test discovery failed",
 			);
+
 			this._error =
 				evt.errorMessage +
 				"\n\n\n" +
 				new Error().stack?.replace("Error:", "Stacktrace:");
+
 			test.error = new vscode.MarkdownString(
 				`[View details](command:testExplorerConverter.showError?${encodeURIComponent(
 					JSON.stringify([this.controllerId]),
 				)})`,
 			);
+
 			test.error.isTrusted = true;
+
 			this.controller.items.replace([test]);
 		}
 	}
@@ -369,8 +400,11 @@ export class TestConverter implements vscode.Disposable {
 			item.label,
 			item.file ? fileToUri(item.file) : defaultUri,
 		);
+
 		metadata.set(test, { isSuite: item.type === "suite", converter: this });
+
 		this.itemsById.set(item.id, test);
+
 		test.description = item.description;
 
 		if (item.line !== undefined) {
@@ -404,6 +438,7 @@ export class TestConverter implements vscode.Disposable {
 			) {
 				runningSuite.children.add(this.createTest(evt.suite));
 			}
+
 			if (this.itemsById.has(suiteId)) {
 				this.runningSuiteByRunId.set(
 					runId,
@@ -440,6 +475,7 @@ export class TestConverter implements vscode.Disposable {
 		) {
 			runningSuite.children.add(this.createTest(evt.test));
 		}
+
 		const vscodeTest = this.itemsById.get(testId);
 
 		if (!vscodeTest) {
@@ -455,22 +491,29 @@ export class TestConverter implements vscode.Disposable {
 					ansiColors.yellow,
 					ansiColors.dim,
 				);
+
 				task.skipped(vscodeTest);
 
 				break;
+
 			case "running":
 				task.started(vscodeTest);
 
 				break;
+
 			case "passed":
 				this.ensureChainAnnounced(task, announcedTests, vscodeTest);
+
 				this.appendState(task, vscodeTest, "✔", ansiColors.green);
+
 				task.passed(vscodeTest);
 
 				break;
+
 			case "errored":
 			case "failed":
 				this.ensureChainAnnounced(task, announcedTests, vscodeTest);
+
 				this.appendState(
 					task,
 					vscodeTest,
@@ -487,17 +530,21 @@ export class TestConverter implements vscode.Disposable {
 						undefined,
 						vscodeTest,
 					);
+
 					if (!evt.decorations?.length) {
 						const message = new vscode.TestMessage(evt.message);
+
 						messages.push(message);
 					}
 				}
 
 				for (const decoration of evt.decorations ?? []) {
 					const message = new vscode.TestMessage(decoration.message);
+
 					const uri = decoration.file
 						? fileToUri(decoration.file)
 						: vscodeTest.uri;
+
 					if (uri) {
 						message.location = new vscode.Location(
 							uri,
@@ -531,7 +578,9 @@ export class TestConverter implements vscode.Disposable {
 
 		for (
 			let item: vscode.TestItem | undefined = leafTest;
+
 			item && !announcedTests.has(item);
+
 			item = item.parent
 		) {
 			chain.unshift(item);
@@ -539,6 +588,7 @@ export class TestConverter implements vscode.Disposable {
 
 		for (const item of chain) {
 			announcedTests.add(item);
+
 			if (item.children.size) {
 				this.appendState(task, item, "▼", ansiColors.green);
 			}
@@ -557,6 +607,7 @@ export class TestConverter implements vscode.Disposable {
 		for (let parent = vscodeTest.parent; parent; parent = parent.parent) {
 			indent += "  ";
 		}
+
 		task.appendOutput(
 			indent +
 				symbolColor(symbol) +
@@ -567,7 +618,9 @@ export class TestConverter implements vscode.Disposable {
 
 const gatherChildren = (col: vscode.TestItemCollection) => {
 	const children: vscode.TestItem[] = [];
+
 	col.forEach((child) => children.push(child));
+
 	return children;
 };
 

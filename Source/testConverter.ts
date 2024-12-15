@@ -578,9 +578,7 @@ export class TestConverter implements vscode.Disposable {
 
 		for (
 			let item: vscode.TestItem | undefined = leafTest;
-
 			item && !announcedTests.has(item);
-
 			item = item.parent
 		) {
 			chain.unshift(item);
